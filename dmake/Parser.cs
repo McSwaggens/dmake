@@ -56,7 +56,7 @@ namespace dmake
 				}
 				else
 				{
-					Console.WriteLine ($"[DMAKE WARNING] Unknown stage called \"{str}\"");
+					Logger.Warning ($"Unknown stage called '{str}'");
 				}
 			}
 

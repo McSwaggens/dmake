@@ -103,7 +103,7 @@ namespace dmake
 		{
 			if (!FindSourceDirectory (out sourceDirectory))
 			{
-				Console.WriteLine ("Unable to find source directory...");
+				Logger.Warning ("Unable to find source directory...");
 				return false;
 			}
 
@@ -119,7 +119,7 @@ namespace dmake
 
 			if (files.Count == 0)
 			{
-				Console.WriteLine ("[DMAKE ERROR] No files found to compile.");
+				Logger.Warning ("No files found to compile.");
 
 				return false;
 			}

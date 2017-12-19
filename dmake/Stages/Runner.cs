@@ -30,7 +30,7 @@ namespace dmake.Stages
 
 				process.WaitForExit ();
 
-				Logger.Normal ("Program has finished.");
+				Logger.Verbose ("Program has finished.");
 			}
 		}
 	}

@@ -34,7 +34,7 @@ namespace dmake.Stages
 
 		public void CompileSourceFile ( SourceFile file, string outputDirectory )
 		{
-			Logger.ProgressInfo ($"Compiling source file \"{Path.GetFileName (file.path)}\"");
+			Logger.ProgressInfo ($"Compiling source file '{Path.GetFileName (file.path)}'");
 
 			var procInfo = new ProcessStartInfo
 			{
@@ -57,7 +57,7 @@ namespace dmake.Stages
 		{
 			string outputFile = project.outputFile;
 
-			Logger.ProgressInfo ($"Linking object files -> {outputFile}");
+			Logger.ProgressInfo ($"Linking object files -> '{Path.GetFileName (outputFile)}'");
 
 			string filesConcat = "";
 
@@ -129,7 +129,7 @@ namespace dmake.Stages
 				}
 				catch (Exception e)
 				{
-					Console.WriteLine ($"[DMAKE ERROR] Exception in compile thread:\n\t{e.Message}");
+					Logger.Warning ($"Exception in compile thread:\n\t{e.Message}");
 				}
 				finally
 				{
