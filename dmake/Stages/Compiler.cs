@@ -13,7 +13,6 @@ namespace dmake.Stages
 	{
 		public static bool useMinGW = true;
 		public static bool forceCPPOnC = false;
-		public static bool verbose = true;
 		public static int timeout = 60;
 
 		public string name;
@@ -35,7 +34,7 @@ namespace dmake.Stages
 
 		public void CompileSourceFile ( SourceFile file, string outputDirectory )
 		{
-			Console.WriteLine ($"Compiling source file \"{Path.GetFileName (file.path)}\"...");
+			Logger.ProgressInfo ($"Compiling source file \"{Path.GetFileName (file.path)}\"");
 
 			var procInfo = new ProcessStartInfo
 			{
@@ -45,21 +44,20 @@ namespace dmake.Stages
 				RedirectStandardOutput = true,
 			};
 
-			if (verbose)
-			{
-				Console.WriteLine ($"[Verbose] {procInfo.FileName} {procInfo.Arguments}");
-			}
+			Logger.Verbose ($"{procInfo.FileName} {procInfo.Arguments}");
 
 			Process process = Process.Start (procInfo);
 
 			process.WaitForExit (1000 * timeout);
+
+			process.Close ();
 		}
 
 		public static async Task LinkProject ( Project project )
 		{
-			string outputFile = $"{project.outputDirectory}/{project.name}.exe";
+			string outputFile = project.outputFile;
 
-			Console.WriteLine ($"Linking object files -> {outputFile}");
+			Logger.ProgressInfo ($"Linking object files -> {outputFile}");
 
 			string filesConcat = "";
 
@@ -75,16 +73,13 @@ namespace dmake.Stages
 
 			var procInfo = new ProcessStartInfo
 			{
-				FileName = $"\"{Util.MinGWPath}/bin/g++.exe\"",
+				FileName = $"\"{Platform.cpp}\"",
 				Arguments = $"{filesConcat} -o \"{outputFile}\"",
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
 			};
 
-			if (verbose)
-			{
-				Console.WriteLine ($"[Verbose] {procInfo.FileName} {procInfo.Arguments}");
-			}
+			Logger.Verbose ($"{procInfo.FileName} {procInfo.Arguments}");
 
 			Process process = Process.Start (procInfo);
 
@@ -99,11 +94,22 @@ namespace dmake.Stages
 			}
 		}
 
-		public static readonly Compiler C = new Compiler ("C", $"{Util.MinGWPath}/bin/gcc");
-		public static readonly Compiler CPP = new Compiler ("C++", $"{Util.MinGWPath}/bin/g++");
+		public static readonly Compiler C = new Compiler ("C", Platform.c);
+		public static readonly Compiler CPP = new Compiler ("C++", Platform.cpp);
 
 		public static int maxThreads = 4;
 		public static List<Thread> threadPool = new List<Thread> ();
+		private static Object threadPoolLock = new Object ();
+
+		private static void FreeThread ( Thread thread )
+		{
+			lock (threadPoolLock)
+			{
+				Debug.Print ("Removing thread from thread pool.");
+				threadPool.Remove (thread);
+				Debug.Print ($"Thread pool size is now {threadPool.Count}");
+			}
+		}
 
 		public static void ExecuteThreaded ( Action function )
 		{
@@ -113,7 +119,8 @@ namespace dmake.Stages
 				Thread.Sleep (10);
 			}
 
-			Thread thread = new Thread (() =>
+			Thread thread = null;
+			thread = new Thread (() =>
 			{
 				try
 				{
@@ -127,7 +134,7 @@ namespace dmake.Stages
 				finally
 				{
 					// Release the thread from the thread pool
-					threadPool.Remove (Thread.CurrentThread);
+					FreeThread (thread);
 				}
 			});
 
@@ -140,11 +147,26 @@ namespace dmake.Stages
 
 		public static async Task CompileProject ( Project project )
 		{
+			if (File.Exists (project.outputFile))
+			{
+				Logger.Warning ("Deleting old binary file.");
+				File.Delete (project.outputFile);
+			}
+
 			foreach (SourceFile source in project.files)
 			{
 				if (source.type == SourceType.C)
 				{
-					ExecuteThreaded (() => C.CompileSourceFile (source, project.outputDirectory));
+					if (forceCPPOnC)
+					{
+						// Use C++ compiler on C code
+						ExecuteThreaded (() => CPP.CompileSourceFile (source, project.outputDirectory));
+					}
+					else
+					{
+						// Use C compiler on C code
+						ExecuteThreaded (() => C.CompileSourceFile (source, project.outputDirectory));
+					}
 				}
 				else if (source.type == SourceType.CPP)
 				{
@@ -157,7 +179,7 @@ namespace dmake.Stages
 				Thread.Sleep (10);
 			}
 
-			Console.WriteLine ($"All worker threads completed.");
+			Logger.Verbose ($"All worker threads completed.");
 		}
 	}
 }

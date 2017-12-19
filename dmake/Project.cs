@@ -29,6 +29,7 @@ namespace dmake
 		public string path;
 		public string sourceDirectory;
 		public string outputDirectory;
+		public string outputFile;
 		public List<SourceFile> files = new List<SourceFile> ();
 
 		public Project ( string path )
@@ -71,7 +72,7 @@ namespace dmake
 
 		private List<SourceFile> RecursiveAnalizeDirectory ( string inputDir )
 		{
-			Console.WriteLine ($"Searching: {inputDir}");
+			Logger.Verbose ($"Searching: {inputDir}");
 			List<SourceFile> files = new List<SourceFile> ();
 
 			foreach (string file in Directory.GetFiles (inputDir))
@@ -108,9 +109,11 @@ namespace dmake
 
 			if (!FindOutputDirectory (out outputDirectory))
 			{
-				Console.WriteLine ("Output directory missing... Creating one for you...");
+				Logger.Warning ("Output directory missing... Creating one for you...");
 				Directory.CreateDirectory (path + "/bin");
 			}
+
+			outputFile = $"{outputDirectory}/{name}{Platform.executableExtension}";
 
 			files = RecursiveAnalizeDirectory (sourceDirectory);
 
