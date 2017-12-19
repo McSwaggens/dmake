@@ -17,8 +17,10 @@ namespace dmake
 			// wait until it's finished.
 			DMake.Start (stages).GetAwaiter ().GetResult ();
 
+#if DEBUG
 			Console.WriteLine ("DMake finished.");
 			Console.ReadLine ();
+#endif
 		}
 	}
 }

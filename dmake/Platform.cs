@@ -18,5 +18,7 @@ namespace dmake
 		public static readonly string binDir = isUnix ? "/bin/" : "C:\\MinGW\\bin\\";
 		public static readonly string cpp = binDir + "g++" + executableExtension;
 		public static readonly string c = binDir + "gcc" + executableExtension;
+
+		public static readonly string outputBinDir = isUnix ? "/usr/bin/" : "C:\\Windows\\System32\\";
 	}
 }

@@ -11,7 +11,7 @@ namespace dmake
 		public static Dictionary<string, ConsoleColor> outputStack = new Dictionary<string, ConsoleColor> ();
 		private static Object ioLock = new Object ();
 
-		public static bool verbose = false;
+		public static bool verbose = true;
 
 		public static void Normal ( object str )
 		{

@@ -33,11 +33,20 @@ namespace dmake
 				currentStage = stage;
 				if (stage == Stage.COMPILE)
 				{
-					Console.WriteLine ("Compiling project...");
+					Logger.Normal ("Compiling project...");
 					await Compiler.CompileProject (project);
 
-					Console.WriteLine ("Linking project...");
+					Logger.Normal ("Linking project...");
 					await Compiler.LinkProject (project);
+				}
+				else if (stage == Stage.INSTALL)
+				{
+					Logger.Normal ("Installing project into system binary directory...");
+					await Installer.Install (project);
+				}
+				else if (stage == Stage.RUN)
+				{
+					await Runner.Run (project);
 				}
 			}
 
