@@ -39,8 +39,8 @@ namespace dmake.Stages
 
 			var procInfo = new ProcessStartInfo
 			{
-				FileName = Platform.FPath(path),
-				Arguments = $" -c {Platform.FPath(file.path)} -o {Platform.FPath($"{outputDirectory}/{file.name}")}.o",
+				FileName = Platform.FPath (path),
+				Arguments = $" -c {Platform.FPath (file.path)} -o {Platform.FPath ($"{outputDirectory}/{file.name}")}.o",
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
 			};
@@ -66,7 +66,7 @@ namespace dmake.Stages
 			{
 				if (objFile.EndsWith (".o"))
 				{
-					filesConcat += $"{Platform.FPath(objFile)} ";
+					filesConcat += $"{Platform.FPath (objFile)} ";
 				}
 			}
 
@@ -74,8 +74,8 @@ namespace dmake.Stages
 
 			var procInfo = new ProcessStartInfo
 			{
-				FileName = $"{Platform.FPath(Platform.cpp)}",
-				Arguments = $" {filesConcat} -o {Platform.FPath(outputFile)}",
+				FileName = $"{Platform.FPath (Platform.cpp)}",
+				Arguments = $" {filesConcat} -o {Platform.FPath (outputFile)}",
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
 			};
