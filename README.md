@@ -1,5 +1,7 @@
-# dmake
+# DMake
 An alternative multi-platform C/C++ build tool
+
+![Screenshot](https://i.imgur.com/uXJAnY4.png)
 
 # Description
 DMake is a streamlined C/C++ build tool replacing CMake and GNU Make that targets Unix and Windows(MinGW).
