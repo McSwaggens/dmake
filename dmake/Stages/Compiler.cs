@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using dmake;
 
 namespace dmake.Stages
 {
@@ -38,8 +39,8 @@ namespace dmake.Stages
 
 			var procInfo = new ProcessStartInfo
 			{
-				FileName = $"\"{path}\"",
-				Arguments = $"-c \"{file.path}\" -o \"{outputDirectory}/{file.name}.o\"",
+				FileName = Platform.FPath(path),
+				Arguments = $" -c {Platform.FPath(file.path)} -o {Platform.FPath($"{outputDirectory}/{file.name}")}.o",
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
 			};
@@ -65,7 +66,7 @@ namespace dmake.Stages
 			{
 				if (objFile.EndsWith (".o"))
 				{
-					filesConcat += $"\"{objFile}\" ";
+					filesConcat += $"{Platform.FPath(objFile)} ";
 				}
 			}
 
@@ -73,8 +74,8 @@ namespace dmake.Stages
 
 			var procInfo = new ProcessStartInfo
 			{
-				FileName = $"\"{Platform.cpp}\"",
-				Arguments = $"{filesConcat} -o \"{outputFile}\"",
+				FileName = $"{Platform.FPath(Platform.cpp)}",
+				Arguments = $" {filesConcat} -o {Platform.FPath(outputFile)}",
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
 			};

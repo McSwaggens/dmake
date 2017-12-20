@@ -35,7 +35,7 @@ namespace dmake
 		public Project ( string path )
 		{
 			this.path = path;
-			name = Path.GetFileName (path);
+			name = Path.GetFileName(path);
 		}
 
 		private bool FindSourceDirectory ( out string directory )

@@ -37,7 +37,7 @@ Tested platforms:
  | ------------- | ----------------: |
  | Linux         |   Not Tested      |
  | Windows       |   Working         |
- | OSX           |   Not Tested      |
+ | OSX           |   Working         |
  
  #### Windows
  

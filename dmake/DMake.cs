@@ -15,7 +15,7 @@ namespace dmake
 
 		public static async Task Start ( List<Stage> stages )
 		{
-			Project project = new Project (Util.CurrentPath);
+			Project project = new Project (Util.CurrentPath.TrimEnd('/').TrimEnd('\\'));
 
 			bool analizeSucceded = await project.Analize ();
 
