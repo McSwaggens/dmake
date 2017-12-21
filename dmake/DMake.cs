@@ -29,7 +29,7 @@ namespace dmake
 				return;
 			}
 
-			project.script.CallFunction ("Load");
+			project.script?.CallFunction ("Load");
 
 			foreach (Stage stage in stages)
 			{
