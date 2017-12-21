@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace dmake
 {
 	public static class Platform
 	{
-		public static readonly bool isOSX = Environment.OSVersion.Platform == PlatformID.MacOSX;
+		public static readonly bool isOSX = Environment.OSVersion.Platform == PlatformID.MacOSX || (Environment.OSVersion.Platform == PlatformID.Unix && Directory.Exists("/Volumes") && Directory.Exists("/System") && Directory.Exists("/Users"));
 		public static readonly bool isLinux = Environment.OSVersion.Platform == PlatformID.Unix && !isOSX;
 		public static readonly bool isUnix = isOSX || isLinux;
 		public static readonly bool isWin32 = !isUnix;
