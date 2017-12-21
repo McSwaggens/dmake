@@ -21,7 +21,7 @@ namespace dmake
 
 		public static readonly string outputBinDir = isUnix ? "/usr/bin/" : "C:\\Windows\\System32\\";
 
-		public static string FPath (string path)
+		public static string FPath ( string path )
 		{
 			if (isWin32)
 			{

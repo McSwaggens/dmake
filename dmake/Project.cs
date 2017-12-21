@@ -31,22 +31,44 @@ namespace dmake
 		public string outputDirectory;
 		public string outputFile;
 		public List<SourceFile> files = new List<SourceFile> ();
+		public Script script = null;
+		public string cxxFlags = "";
+		public string linkerFlags = "";
+		public List<string> libraries = new List<string> ();
+
+		public string CombineLibraries ()
+		{
+			string libs = "";
+			libraries.ForEach (s => libs += $"-l{s} ");
+			libs = libs.TrimEnd (' ');
+			return libs;
+		}
 
 		public Project ( string path )
 		{
 			this.path = path;
-			name = Path.GetFileName(path);
+			name = Path.GetFileName (path);
 		}
 
-		private bool FindSourceDirectory ( out string directory )
+		private bool FindLoader ()
 		{
-			directory = "";
+			string filePath = path + "/dmake.lua";
+			if (File.Exists (filePath))
+			{
+				script = new Script (filePath, this);
+				return true;
+			}
 
+			return false;
+		}
+
+		private bool FindSourceDirectory ()
+		{
 			foreach (string dir in Directory.GetDirectories (path))
 			{
 				if (sourceDirectoryNames.Contains (Path.GetFileName (dir)))
 				{
-					directory = dir;
+					sourceDirectory = dir;
 					return true;
 				}
 			}
@@ -54,15 +76,13 @@ namespace dmake
 			return false;
 		}
 
-		private bool FindOutputDirectory ( out string directory )
+		private bool FindOutputDirectory ()
 		{
-			directory = "";
-
 			foreach (string dir in Directory.GetDirectories (path))
 			{
 				if (outputDirectoryNames.Contains (Path.GetFileName (dir)))
 				{
-					directory = dir;
+					outputDirectory = dir;
 					return true;
 				}
 			}
@@ -72,7 +92,7 @@ namespace dmake
 
 		private List<SourceFile> RecursiveAnalizeDirectory ( string inputDir )
 		{
-			Logger.Verbose ($"Searching: {inputDir}");
+			Logger.Verbose ($"Searching: '{inputDir}'");
 			List<SourceFile> files = new List<SourceFile> ();
 
 			foreach (string file in Directory.GetFiles (inputDir))
@@ -101,16 +121,24 @@ namespace dmake
 		/// <returns>Whether or not the directory can properly be used.</returns>
 		public async Task<bool> Analize ()
 		{
-			if (!FindSourceDirectory (out sourceDirectory))
+			if (!FindSourceDirectory ())
 			{
 				Logger.Warning ("Unable to find source directory...");
 				return false;
 			}
 
-			if (!FindOutputDirectory (out outputDirectory))
+			if (!FindOutputDirectory ())
 			{
 				Logger.Warning ("Output directory missing... Creating one for you...");
-				Directory.CreateDirectory (path + "/bin");
+
+				string newOutPath = path + "/bin";
+				Directory.CreateDirectory (newOutPath);
+				outputDirectory = newOutPath;
+			}
+
+			if (!FindLoader ())
+			{
+				Logger.Verbose ("'dmake.lua' not found, consider making one if you want to add custom arguments to the compiler or add libraries, etc.");
 			}
 
 			outputFile = $"{outputDirectory}/{name}{Platform.executableExtension}";

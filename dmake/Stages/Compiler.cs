@@ -33,14 +33,14 @@ namespace dmake.Stages
 			}
 		}
 
-		public void CompileSourceFile ( SourceFile file, string outputDirectory )
+		public void CompileSourceFile ( SourceFile file, Project project )
 		{
 			Logger.ProgressInfo ($"Compiling source file '{Path.GetFileName (file.path)}'");
 
 			var procInfo = new ProcessStartInfo
 			{
 				FileName = Platform.FPath (path),
-				Arguments = $" -c {Platform.FPath (file.path)} -o {Platform.FPath ($"{outputDirectory}/{file.name}")}.o",
+				Arguments = $" -c {Platform.FPath (file.path)} -o {Platform.FPath ($"{project.outputDirectory}/{file.name}")}.o {project.cxxFlags} {project.CombineLibraries ()}",
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
 			};
@@ -75,7 +75,7 @@ namespace dmake.Stages
 			var procInfo = new ProcessStartInfo
 			{
 				FileName = $"{Platform.FPath (Platform.cpp)}",
-				Arguments = $" {filesConcat} -o {Platform.FPath (outputFile)}",
+				Arguments = $" {filesConcat} -o {Platform.FPath (outputFile)} {project.linkerFlags} {project.CombineLibraries ()}",
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
 			};
@@ -161,17 +161,17 @@ namespace dmake.Stages
 					if (forceCPPOnC)
 					{
 						// Use C++ compiler on C code
-						ExecuteThreaded (() => CPP.CompileSourceFile (source, project.outputDirectory));
+						ExecuteThreaded (() => CPP.CompileSourceFile (source, project));
 					}
 					else
 					{
 						// Use C compiler on C code
-						ExecuteThreaded (() => C.CompileSourceFile (source, project.outputDirectory));
+						ExecuteThreaded (() => C.CompileSourceFile (source, project));
 					}
 				}
 				else if (source.type == SourceType.CPP)
 				{
-					ExecuteThreaded (() => CPP.CompileSourceFile (source, project.outputDirectory));
+					ExecuteThreaded (() => CPP.CompileSourceFile (source, project));
 				}
 			}
 
