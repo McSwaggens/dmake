@@ -17,18 +17,19 @@ namespace dmake
 		{
 			Project project = new Project (Util.CurrentPath.TrimEnd ('/').TrimEnd ('\\'));
 
+			Logger.ioSchedulerRunning = true;
+			Task.Run (Logger.IOScheduler);
+
 			bool analizeSucceded = await project.Analize ();
 
 			if (!analizeSucceded)
 			{
+				Logger.Warning ("This is an incorrect directory structure.\nUse 'github.com/McSwaggens/dmake/tree/master/Test' as an example.");
+				Logger.ioSchedulerRunning = false;
 				return;
 			}
 
 			project.script.CallFunction ("Load");
-
-			Logger.ioSchedulerRunning = true;
-
-			Task.Run (Logger.IOScheduler);
 
 			foreach (Stage stage in stages)
 			{
