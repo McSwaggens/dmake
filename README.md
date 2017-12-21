@@ -60,7 +60,7 @@ Tested platforms:
  DMake fixes all of these problems and does more. It doesn't *require* you to write a script/config file to compile your program. DMake does not generate any junk files, keeping your project squeaky clean.
  DMake is the easiest tool to compile your C/C++ code.
  
- #License
+ # License
  [MIT](https://choosealicense.com/licenses/mit/)
  
  
