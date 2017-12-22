@@ -12,7 +12,7 @@ int main ()
 {
 	if (!glewInit () || !glfwInit ())
 	{
-		return;
+		return 0;
 	}
 	
 	GLFWwindow* window = glfwCreateWindow (1920, 1080, "Hello World", NULL, NULL);
