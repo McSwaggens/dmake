@@ -40,7 +40,7 @@ namespace dmake.Stages
 			var procInfo = new ProcessStartInfo
 			{
 				FileName = Platform.FPath (path),
-				Arguments = $" -c {Platform.FPath (file.path)} -o {Platform.FPath ($"{project.outputDirectory}/{file.name}")}.o {project.cxxFlags} {project.CombineLibraries ()}",
+				Arguments = $" -c {Platform.FPath (file.path)} -o {Platform.FPath ($"{project.outputDirectory}/{file.name}.o")} {project.cxxFlags}",
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
 			};
